@@ -62,8 +62,6 @@ var monthcomposite = function(image){
 }
 
 
-
-
 exports.CreateBands = CreateBands;
 exports.createLandCoverSample = createLandCoverSample;
 exports.mosaicByDate = mosaicByDate;
