@@ -24,6 +24,19 @@ var createLandCoverSample = function(img, roi, classValue, pointNum) {
   return labeledSample;
 }
 
+function maskL8sr(image) {
+  var cloudShadowBitMask = 1 << 3;
+  var cloudsBitMask = 1 << 5;
+
+  var qa = image.select('pixel_qa');
+
+  var mask = qa.bitwiseAnd(cloudShadowBitMask).eq(0)
+      .and(qa.bitwiseAnd(cloudsBitMask).eq(0));
+
+  return image.updateMask(mask).divide(10000)
+      .copyProperties(image, ["system:time_start"]); //      .select("B[0-9]*")
+}
+
 var mosaicByDate = function(imcol){
   // convert the ImageCollection into List
   var imlist = imcol.toList(imcol.size());
@@ -64,5 +77,6 @@ var monthcomposite = function(image){
 
 exports.CreateBands = CreateBands;
 exports.createLandCoverSample = createLandCoverSample;
+exports.maskL8sr = maskL8sr;
 exports.mosaicByDate = mosaicByDate;
 exports.monthcomposite = monthcomposite;
