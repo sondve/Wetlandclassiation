@@ -70,7 +70,7 @@ var calculateMeanAndStdDev = function(sample, imgBand) {
 }
 
 // 添加 flag 属性，用于筛选 Grassland_Sample_flat 样本
-var  selectsample = function(sample1, sample_stats){
+var  selectsample = function(sample1, sample_stats, imgBand){
   var Sample2 = sample1.map(function(fea){
   var feaValue = ee.List(ee.Feature(fea).toDictionary(imgBand).values());
   var flag = ee.List([0,1,2,3,4,5,6]).map(function(item){
