@@ -24,6 +24,16 @@ var createLandCoverSample = function(img, roi, classValue, pointNum) {
   return labeledSample;
 }
 
+// 生成月度合成影像函数
+var generateMonthlyComposite = function(image, start_date, roi) {
+  var monthcomposite = ee.List.sequence(0, 1 * 6).map(function(n) {
+    var start = ee.Date(start_date).advance(n, 'month');
+    var end = start.advance(1, 'month');
+    return image.filterDate(start, end).select("NDVI").median().clip(roi);
+  }).flatten();
+  return monthcomposite;
+};
+
 // 从随机设置的样本点中采样数据
 var reclassSamplefromSample = function(classSample, image) {
   var ReclassSample = image.sampleRegions({
@@ -121,6 +131,7 @@ var afn_SNIC = function(imageOriginal, SuperPixelSize, Compactness,
 
 exports.CreateBands = CreateBands;
 exports.createLandCoverSample = createLandCoverSample;
+exports.generateMonthlyComposite = generateMonthlyComposite;
 exports.reclassSamplefromSample = reclassSamplefromSample;
 exports.calculateMeanAndStdDev = calculateMeanAndStdDev;
 exports.selectsample = selectsample;
