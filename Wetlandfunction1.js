@@ -69,7 +69,58 @@ var calculateMeanAndStdDev = function(sample) {
   };
 }
 
+// 添加 flag 属性，用于筛选 Grassland_Sample_flat 样本
+var  selectsample = function(sample1, sample_stats){
+  var Sample2 = sample1.map(function(fea){
+  var feaValue = ee.List(ee.Feature(fea).toDictionary(imgBand).values());
+  var flag = ee.List([0,1,2,3,4,5,6]).map(function(item){
+    var a_b = ee.Number(sample_stats.meanStdDevMinus.get(item)).subtract(feaValue.get(item));
+    var c_b = ee.Number(sample_stats.meanStdDevPlus.get(item)).subtract(feaValue.get(item));
+    return ee.Number(a_b).multiply(c_b);
+  });
+  return fea.set('flag0', flag.get(0)).set('flag1', flag.get(1)).set('flag2', flag.get(2))
+            .set('flag3', flag.get(3)).set('flag4', flag.get(4)).set('flag5', flag.get(5))
+            .set('flag6', flag.get(6));
+  });
+  // 筛选出 flag 为负值的样本点，即 sample 样本本点
+  var Sample3 = Sample2.filter(ee.Filter.lt("flag0", 0))
+                            .filter(ee.Filter.lt("flag1", 0))
+                            .filter(ee.Filter.lt("flag2", 0))
+                            .filter(ee.Filter.lt("flag3", 0))
+                            .filter(ee.Filter.lt("flag4", 0))
+                            .filter(ee.Filter.lt("flag5", 0))
+                            .filter(ee.Filter.lt("flag6", 0));
+  return Sample3;
+}
+
+var sts_minmax = function(image){
+  var minmax = image.reduceRegion({
+  reducer: ee.Reducer.minMax(),
+  geometry:roi, 
+  scale: 30,
+  maxPixels: 1e13}).values();
+  return minmax;}
+
+var afn_SNIC = function(imageOriginal, SuperPixelSize, Compactness,
+    Connectivity, NeighborhoodSize, SeedShape) {
+    var theSeeds = ee.Algorithms.Image.Segmentation.seedGrid(
+        SuperPixelSize, SeedShape);
+    var snic2 = ee.Algorithms.Image.Segmentation.SNIC({
+        image: imageOriginal,
+        size: SuperPixelSize,
+        compactness: Compactness,
+        connectivity: Connectivity,
+        neighborhoodSize: NeighborhoodSize,
+        seeds: theSeeds
+    });
+    var theStack = snic2.addBands(theSeeds);
+    return (theStack);
+};
+
 exports.CreateBands = CreateBands;
 exports.createLandCoverSample = createLandCoverSample;
 exports.reclassSamplefromSample = reclassSamplefromSample;
 exports.calculateMeanAndStdDev = calculateMeanAndStdDev;
+exports.selectsample = selectsample;
+exports.sts_minmax = sts_minmax;
+exports.afn_SNIC = afn_SNIC;
