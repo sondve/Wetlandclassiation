@@ -38,7 +38,8 @@ var reclassSamplefromSample = function(classSample, image) {
 
 
 // 定义函数计算样本点每个波段的均值和标准差
-var calculateMeanAndStdDev = function(sample, imgBand) {
+var calculateMeanAndStdDev = function(sample, image) {
+  var imgBand = image.bandNames();
   var mean = sample.reduceColumns({
     reducer: ee.Reducer.mean().repeat(7),
     selectors: imgBand
@@ -70,7 +71,8 @@ var calculateMeanAndStdDev = function(sample, imgBand) {
 }
 
 // 添加 flag 属性，用于筛选 Grassland_Sample_flat 样本
-var  selectsample = function(sample1, sample_stats, imgBand){
+var  selectsample = function(sample1, sample_stats, image){
+  var imgBand = image.bandNames();
   var Sample2 = sample1.map(function(fea){
   var feaValue = ee.List(ee.Feature(fea).toDictionary(imgBand).values());
   var flag = ee.List([0,1,2,3,4,5,6]).map(function(item){
