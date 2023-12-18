@@ -105,29 +105,6 @@ var  selectsample = function(sample1, sample_stats, image){
   return Sample3;
 }
 
-var sts_minmax = function(image){
-  var minmax = image.reduceRegion({
-  reducer: ee.Reducer.minMax(),
-  geometry:roi, 
-  scale: 30,
-  maxPixels: 1e13}).values();
-  return minmax;}
-
-var afn_SNIC = function(imageOriginal, SuperPixelSize, Compactness,
-    Connectivity, NeighborhoodSize, SeedShape) {
-    var theSeeds = ee.Algorithms.Image.Segmentation.seedGrid(
-        SuperPixelSize, SeedShape);
-    var snic2 = ee.Algorithms.Image.Segmentation.SNIC({
-        image: imageOriginal,
-        size: SuperPixelSize,
-        compactness: Compactness,
-        connectivity: Connectivity,
-        neighborhoodSize: NeighborhoodSize,
-        seeds: theSeeds
-    });
-    var theStack = snic2.addBands(theSeeds);
-    return (theStack);
-};
 
 exports.CreateBands = CreateBands;
 exports.createLandCoverSample = createLandCoverSample;
@@ -135,5 +112,3 @@ exports.generateMonthlyComposite = generateMonthlyComposite;
 exports.reclassSamplefromSample = reclassSamplefromSample;
 exports.calculateMeanAndStdDev = calculateMeanAndStdDev;
 exports.selectsample = selectsample;
-exports.sts_minmax = sts_minmax;
-exports.afn_SNIC = afn_SNIC;
