@@ -140,7 +140,7 @@ var dataset = ee.ImageCollection("LANDSAT/LT05/C02/T1_TOA").filterBounds(roi).ma
   .merge(ee.ImageCollection("LANDSAT/LE07/C02/T1_TOA").filterBounds(roi).map(cloudMask).select(l57rawName, l8rawName))// Landsat7
   .merge(ee.ImageCollection("LANDSAT/LC08/C02/T1_TOA").filterBounds(roi).map(cloudMask).select(l8rawName))// Landsat8
   .filterDate('2000-01-01', '2020-12-31').map(Landsat_vis);//.map(GLCM);
-var year = 2020;
+//var year = 2020;
 var epoch_dataset = dataset.filterDate(year + '-01-01', year + '-12-31');
 /*** when year=2000, the real timescale is 2000-2001. ***/
 // var epoch_dataset = dataset.filterDate('2000-01-01', '2001-12-31');
